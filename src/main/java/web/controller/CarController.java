@@ -7,32 +7,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import web.model.Car;
 import web.model.CarService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class CarController {
 
+    CarService carService;
+
+    public CarController(CarService carService) {
+        this.carService = carService;
+    }
 
     @GetMapping("/cars")
-    public String getCars(Model model) {
-        List<Car> cars = new ArrayList<>();
-        cars = Car.addCars();
-        model.addAttribute("cars1", cars);
+    public String getCars(@RequestParam(value = "count", required = false) Integer count, Model model) {
+        List<Car> result = null;
+        if (count == null) {
+            result = carService.addCars();
+        } else if (count < 5) {
+            result = carService.getSomeCars(count);
+        } else if (count <= 5) {
+            result = carService.addCars();
+        }
+
+        model.addAttribute("result", result);
 
         return "cars";
 
     }
-
-
-//
-//    @GetMapping("/cars/{count}")
-//    public String getCarsByCount(@RequestParam("count") int count, Model model) {
-//        ArrayList<Car> cars = carService.getCars(count);
-//        model.addAttribute("carsCount", cars);
-//        return "cars";
-//
-//    }
 
 }
 
